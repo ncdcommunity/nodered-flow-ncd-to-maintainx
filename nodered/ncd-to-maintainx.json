@@ -1,0 +1,741 @@
+[
+    {
+        "id": "016bfcb6c98dfa12",
+        "type": "tab",
+        "label": "NCD - MaintainX",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "91b1f389750935f0",
+        "type": "change",
+        "z": "016bfcb6c98dfa12",
+        "name": "get-uptime",
+        "rules": [
+            {
+                "t": "set",
+                "p": "value",
+                "pt": "msg",
+                "to": "payload.sensor_data.ct_input_uptime",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 510,
+        "y": 440,
+        "wires": [
+            [
+                "51b5511acd6b3308"
+            ]
+        ]
+    },
+    {
+        "id": "4ff72933e8976bd4",
+        "type": "function",
+        "z": "016bfcb6c98dfa12",
+        "name": "MaintainX",
+        "func": "// Reference\n// https://api.getmaintainx.com/v1/docs#tag/Meters/paths/~1meterreadings/post\n// MAINTAINX - METER READINGS\n\nmsg.payload = [\n    {\n        \"meterId\": msg.meterId,\n        \"value\": msg.value,\n        \"readingDate\": new Date(msg.payload.received).toISOString()\n    }\n]\n// Endpoint\nmsg.url = \"https://api.getmaintainx.com/v1/meterreadings\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1120,
+        "y": 440,
+        "wires": [
+            [
+                "4931df88bea9c9fc",
+                "8ffb5c2be3bbd8a9"
+            ]
+        ],
+        "icon": "font-awesome/fa-file-excel-o"
+    },
+    {
+        "id": "8ffb5c2be3bbd8a9",
+        "type": "http request",
+        "z": "016bfcb6c98dfa12",
+        "name": "MaintainX - POST",
+        "method": "POST",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "bearer",
+        "senderr": false,
+        "headers": [],
+        "x": 1410,
+        "y": 440,
+        "wires": [
+            [
+                "ba4726acb1a5b37c"
+            ]
+        ],
+        "icon": "font-awesome/fa-file-excel-o"
+    },
+    {
+        "id": "ba4726acb1a5b37c",
+        "type": "switch",
+        "z": "016bfcb6c98dfa12",
+        "name": "error-handler",
+        "property": "statusCode",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "201",
+                "vt": "num"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 1630,
+        "y": 440,
+        "wires": [
+            [
+                "072471475ce685cb"
+            ],
+            [
+                "5c3e0d4354a500cd"
+            ]
+        ]
+    },
+    {
+        "id": "36545d802c44d8b9",
+        "type": "change",
+        "z": "016bfcb6c98dfa12",
+        "name": "get-counter",
+        "rules": [
+            {
+                "t": "set",
+                "p": "value",
+                "pt": "msg",
+                "to": "payload.sensor_data.ct_input_counter",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 510,
+        "y": 380,
+        "wires": [
+            [
+                "ec8911e013ef4f52"
+            ]
+        ]
+    },
+    {
+        "id": "434e9b3525dca852",
+        "type": "change",
+        "z": "016bfcb6c98dfa12",
+        "name": "get-battery",
+        "rules": [
+            {
+                "t": "set",
+                "p": "value",
+                "pt": "msg",
+                "to": "payload.battery_percent",
+                "tot": "msg"
+            },
+            {
+                "t": "set",
+                "p": "value",
+                "pt": "msg",
+                "to": "$number(value)",
+                "tot": "jsonata"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 510,
+        "y": 500,
+        "wires": [
+            [
+                "a22df2f7f98f1298"
+            ]
+        ]
+    },
+    {
+        "id": "4931df88bea9c9fc",
+        "type": "debug",
+        "z": "016bfcb6c98dfa12",
+        "name": "meter_reading_format",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1320,
+        "y": 520,
+        "wires": []
+    },
+    {
+        "id": "9c497c4e3731f2ad",
+        "type": "switch",
+        "z": "016bfcb6c98dfa12",
+        "name": "filter-sensor-data",
+        "property": "topic",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "sensor_data",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 230,
+        "y": 440,
+        "wires": [
+            [
+                "36545d802c44d8b9",
+                "91b1f389750935f0",
+                "434e9b3525dca852"
+            ]
+        ]
+    },
+    {
+        "id": "9a70e785df602ec6",
+        "type": "delay",
+        "z": "016bfcb6c98dfa12",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "3",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 845,
+        "y": 440,
+        "wires": [
+            [
+                "9fac780f70cd9da5"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "4574dc6eb00e7699",
+        "type": "delay",
+        "z": "016bfcb6c98dfa12",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "5",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 845,
+        "y": 500,
+        "wires": [
+            [
+                "9fac780f70cd9da5"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "91a50933bcedf8a1",
+        "type": "delay",
+        "z": "016bfcb6c98dfa12",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "1",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 845,
+        "y": 380,
+        "wires": [
+            [
+                "9fac780f70cd9da5"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "c93b9dd84b0b2175",
+        "type": "comment",
+        "z": "016bfcb6c98dfa12",
+        "name": "Set sensor_data here",
+        "info": "",
+        "x": 540,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "d962d1484e795d98",
+        "type": "comment",
+        "z": "016bfcb6c98dfa12",
+        "name": "Format meter readings ",
+        "info": "",
+        "x": 1160,
+        "y": 400,
+        "wires": []
+    },
+    {
+        "id": "ec8911e013ef4f52",
+        "type": "change",
+        "z": "016bfcb6c98dfa12",
+        "name": "set-meter-id",
+        "rules": [
+            {
+                "t": "set",
+                "p": "meterId",
+                "pt": "msg",
+                "to": "",
+                "tot": "num"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 730,
+        "y": 380,
+        "wires": [
+            [
+                "91a50933bcedf8a1"
+            ]
+        ]
+    },
+    {
+        "id": "51b5511acd6b3308",
+        "type": "change",
+        "z": "016bfcb6c98dfa12",
+        "name": "set-meter-id",
+        "rules": [
+            {
+                "t": "set",
+                "p": "meterId",
+                "pt": "msg",
+                "to": "",
+                "tot": "num"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 730,
+        "y": 440,
+        "wires": [
+            [
+                "9a70e785df602ec6"
+            ]
+        ]
+    },
+    {
+        "id": "a22df2f7f98f1298",
+        "type": "change",
+        "z": "016bfcb6c98dfa12",
+        "name": "set-meter-id",
+        "rules": [
+            {
+                "t": "set",
+                "p": "meterId",
+                "pt": "msg",
+                "to": "",
+                "tot": "num"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 730,
+        "y": 500,
+        "wires": [
+            [
+                "4574dc6eb00e7699"
+            ]
+        ]
+    },
+    {
+        "id": "860b88aff0b3a877",
+        "type": "function",
+        "z": "016bfcb6c98dfa12",
+        "name": "create-new-automated-meter",
+        "func": "// Reference\n// https://api.getmaintainx.com/v1/docs#tag/Meters/paths/~1meters/post\n// MAINTAINX - AUTOMATED METER\n\nmsg.payload = {\n    \"name\": msg.new_automated_meter.name,\n    \"description\": msg.new_automated_meter.description,\n    \"measurementType\": \"AUTOMATED_SENSOR\",\n    \"unit\": msg.new_automated_meter.unit,\n    \"assetId\": msg.new_automated_meter.assetId,\n    \"locationId\": msg.new_automated_meter.locationId\n}\n// Endpoint\nmsg.url = \"https://api.getmaintainx.com/v1/meters\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1060,
+        "y": 200,
+        "wires": [
+            [
+                "12eac44020988ef5",
+                "8ffb5c2be3bbd8a9"
+            ]
+        ],
+        "icon": "font-awesome/fa-file-excel-o"
+    },
+    {
+        "id": "80c07ab845ea1b78",
+        "type": "inject",
+        "z": "016bfcb6c98dfa12",
+        "name": "enable-flow",
+        "props": [],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "x": 370,
+        "y": 200,
+        "wires": [
+            [
+                "8934bdace5a4bccd"
+            ]
+        ]
+    },
+    {
+        "id": "73f5671ae39ea6b1",
+        "type": "function",
+        "z": "016bfcb6c98dfa12",
+        "name": "validator",
+        "func": "if(msg.new_automated_meter.name != \"\" && msg.new_automated_meter.unit != \"\" && msg.new_automated_meter.assetId != \"\" && msg.new_automated_meter.locationId != \"\"){\n    return msg;\n}\nelse{\n    node.error(\"One or more parameters are missing\", msg);\n}",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 840,
+        "y": 200,
+        "wires": [
+            [
+                "860b88aff0b3a877"
+            ]
+        ]
+    },
+    {
+        "id": "12eac44020988ef5",
+        "type": "debug",
+        "z": "016bfcb6c98dfa12",
+        "name": "new_meter_fomat",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1310,
+        "y": 200,
+        "wires": []
+    },
+    {
+        "id": "072471475ce685cb",
+        "type": "json",
+        "z": "016bfcb6c98dfa12",
+        "name": "",
+        "property": "payload",
+        "action": "obj",
+        "pretty": false,
+        "x": 1755,
+        "y": 380,
+        "wires": [
+            [
+                "217889f9693adfdc",
+                "e935624421c49125"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "217889f9693adfdc",
+        "type": "switch",
+        "z": "016bfcb6c98dfa12",
+        "name": "new-meter-response",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "hask",
+                "v": "id",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 1900,
+        "y": 340,
+        "wires": [
+            [
+                "d881949425d0a7b8"
+            ]
+        ]
+    },
+    {
+        "id": "d881949425d0a7b8",
+        "type": "debug",
+        "z": "016bfcb6c98dfa12",
+        "name": "meter_id",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": true,
+        "complete": "payload.id",
+        "targetType": "msg",
+        "statusVal": "payload.id",
+        "statusType": "auto",
+        "x": 2140,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "e935624421c49125",
+        "type": "switch",
+        "z": "016bfcb6c98dfa12",
+        "name": "new-reading-response",
+        "property": "payload[0]",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "hask",
+                "v": "meterId",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 1900,
+        "y": 420,
+        "wires": [
+            [
+                "c689c422dbafc78f"
+            ]
+        ]
+    },
+    {
+        "id": "c689c422dbafc78f",
+        "type": "debug",
+        "z": "016bfcb6c98dfa12",
+        "name": "reading_response",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 2110,
+        "y": 420,
+        "wires": []
+    },
+    {
+        "id": "9fac780f70cd9da5",
+        "type": "function",
+        "z": "016bfcb6c98dfa12",
+        "name": "validator",
+        "func": "if(msg.meterId != \"\" && msg.value != \"\"){\n    return msg;\n}\nelse{\n    node.error(\"meterId and value are required\", msg);\n}",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 980,
+        "y": 440,
+        "wires": [
+            [
+                "4ff72933e8976bd4"
+            ]
+        ]
+    },
+    {
+        "id": "b32b7478fe557f28",
+        "type": "comment",
+        "z": "016bfcb6c98dfa12",
+        "name": "Set merer IDs here",
+        "info": "",
+        "x": 750,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "3d272189e7ed1063",
+        "type": "comment",
+        "z": "016bfcb6c98dfa12",
+        "name": "Flow to create new automated meters",
+        "info": "",
+        "x": 430,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "541a7ae369f41e7d",
+        "type": "comment",
+        "z": "016bfcb6c98dfa12",
+        "name": "Set properties here",
+        "info": "",
+        "x": 630,
+        "y": 160,
+        "wires": []
+    },
+    {
+        "id": "8d4cc5ba18bdd249",
+        "type": "comment",
+        "z": "016bfcb6c98dfa12",
+        "name": "Flow to create new meter readings",
+        "info": "",
+        "x": 280,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "82f823df6f2be69f",
+        "type": "comment",
+        "z": "016bfcb6c98dfa12",
+        "name": "MaintainX credentials here",
+        "info": "",
+        "x": 1430,
+        "y": 400,
+        "wires": []
+    },
+    {
+        "id": "a725a1a682b3b0f9",
+        "type": "comment",
+        "z": "016bfcb6c98dfa12",
+        "name": "Requirements",
+        "info": "MaintainX \n- Location Created (ID)\n- Asset Created (ID)",
+        "x": 350,
+        "y": 140,
+        "wires": []
+    },
+    {
+        "id": "3a3f80c7c9f7bdf3",
+        "type": "comment",
+        "z": "016bfcb6c98dfa12",
+        "name": "Requirements",
+        "info": "MaintainX \n- Automated Meter Created (ID)",
+        "x": 210,
+        "y": 380,
+        "wires": []
+    },
+    {
+        "id": "5c3e0d4354a500cd",
+        "type": "debug",
+        "z": "016bfcb6c98dfa12",
+        "name": "response_error",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1880,
+        "y": 480,
+        "wires": []
+    },
+    {
+        "id": "8934bdace5a4bccd",
+        "type": "change",
+        "z": "016bfcb6c98dfa12",
+        "name": "set-meter-properties",
+        "rules": [
+            {
+                "t": "set",
+                "p": "new_automated_meter.name",
+                "pt": "msg",
+                "to": "",
+                "tot": "str"
+            },
+            {
+                "t": "set",
+                "p": "new_automated_meter.description",
+                "pt": "msg",
+                "to": "",
+                "tot": "str"
+            },
+            {
+                "t": "set",
+                "p": "new_automated_meter.unit",
+                "pt": "msg",
+                "to": "",
+                "tot": "str"
+            },
+            {
+                "t": "set",
+                "p": "new_automated_meter.assetId",
+                "pt": "msg",
+                "to": "",
+                "tot": "num"
+            },
+            {
+                "t": "set",
+                "p": "new_automated_meter.locationId",
+                "pt": "msg",
+                "to": "",
+                "tot": "num"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 640,
+        "y": 200,
+        "wires": [
+            [
+                "73f5671ae39ea6b1"
+            ]
+        ]
+    }
+]
