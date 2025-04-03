@@ -768,8 +768,18 @@
         "targetType": "msg",
         "statusVal": "",
         "statusType": "auto",
-        "x": 320,
+        "x": 360,
         "y": 400,
+        "wires": []
+    },
+    {
+        "id": "3c8f113f485c254b",
+        "type": "comment",
+        "z": "30881a3c21636a64",
+        "name": "Select the Serial Device",
+        "info": "",
+        "x": 140,
+        "y": 420,
         "wires": []
     }
 ]
